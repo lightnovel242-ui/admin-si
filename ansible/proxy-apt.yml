@@ -1,0 +1,11 @@
+- name: apt passe par le cache de SRV-ADM01
+  hosts: linux
+  become: true
+  tasks:
+    - name: Fichier /etc/apt/apt.conf.d/01proxy
+      ansible.builtin.copy:
+        dest: /etc/apt/apt.conf.d/01proxy
+        content: 'Acquire::http::Proxy "http://10.10.0.30:3142";'
+        owner: root
+        group: root
+        mode: "0644"
