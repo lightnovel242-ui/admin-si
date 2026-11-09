@@ -1,0 +1,45 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/durcissement
+- name: Paquets de sécurité
+  ansible.builtin.apt:
+    name: [ufw, fail2ban, unattended-upgrades]
+    state: present
+
+- name: ufw, refus par défaut en entrée
+  community.general.ufw:
+    default: deny
+    direction: incoming
+
+- name: ufw, SSH autorisé
+  community.general.ufw:
+    rule: allow
+    port: "22"
+    proto: tcp
+
+- name: ufw, HTTP autorisé sur le serveur web
+  community.general.ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+  when: inventory_hostname == 'srv-web01'
+
+- name: ufw activé
+  community.general.ufw:
+    state: enabled
+
+- name: fail2ban actif
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: true
+
+- name: Mises à jour automatiques de sécurité
+  ansible.builtin.copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+    owner: root
+    group: root
+    mode: "0644"

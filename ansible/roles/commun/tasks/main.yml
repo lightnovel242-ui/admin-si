@@ -1,0 +1,34 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/commun
+- name: Paquets de base
+  ansible.builtin.apt:
+    name: [vim, curl, htop, git, rsync]
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Fuseau horaire
+  community.general.timezone:
+    name: Europe/Paris
+
+- name: Compte audit
+  ansible.builtin.user:
+    name: audit
+    shell: /bin/bash
+    create_home: true
+
+- name: Clé publique du compte audit
+  ansible.posix.authorized_key:
+    user: audit
+    key: "{{ cle_audit }}"
+    state: present
+
+- name: sudo sans mot de passe pour audit
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/audit
+    content: "audit ALL=(ALL) NOPASSWD:ALL\n"
+    owner: root
+    group: root
+    mode: "0440"
+    validate: /usr/sbin/visudo -cf %s
