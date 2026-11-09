@@ -1,0 +1,30 @@
+- name: node_exporter sur les serveurs Linux
+  hosts: linux
+  become: true
+  tasks:
+    - name: Paquet prometheus-node-exporter
+      ansible.builtin.apt:
+        name: prometheus-node-exporter
+        state: present
+        install_recommends: false
+    - name: Collecteur systemd pour ssh, nginx et smbd
+      ansible.builtin.copy:
+        dest: /etc/default/prometheus-node-exporter
+        content: |
+          ARGS="--collector.systemd --collector.systemd.unit-include=(ssh|nginx|smbd)[.]service"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Redémarrer node_exporter
+    - name: Port 9100 ouvert à SRV-ADM01 seulement
+      community.general.ufw:
+        rule: allow
+        port: "9100"
+        proto: tcp
+        from_ip: 10.10.0.30
+  handlers:
+    - name: Redémarrer node_exporter
+      ansible.builtin.service:
+        name: prometheus-node-exporter
+        state: restarted
+      ignore_errors: "{{ ansible_check_mode }}"   # en --check, le paquet n'est pas encore installé
