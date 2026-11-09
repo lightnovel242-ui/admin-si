@@ -1,4 +1,4 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/commun
 - name: Paquets de base
@@ -24,7 +24,7 @@
     key: "{{ cle_audit }}"
     state: present
 
-- name: sudo sans mot de passe pour audit
+- name: Sudo sans mot de passe pour audit
   ansible.builtin.copy:
     dest: /etc/sudoers.d/audit
     content: "audit ALL=(ALL) NOPASSWD:ALL\n"

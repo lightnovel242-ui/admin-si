@@ -1,4 +1,4 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/durcissement
 - name: Paquets de sécurité
@@ -6,29 +6,29 @@
     name: [ufw, fail2ban, unattended-upgrades]
     state: present
 
-- name: ufw, refus par défaut en entrée
+- name: Ufw, refus par défaut en entrée
   community.general.ufw:
     default: deny
     direction: incoming
 
-- name: ufw, SSH autorisé
+- name: Ufw, SSH autorisé
   community.general.ufw:
     rule: allow
     port: "22"
     proto: tcp
 
-- name: ufw, HTTP autorisé sur le serveur web
+- name: Ufw, HTTP autorisé sur le serveur web
   community.general.ufw:
     rule: allow
     port: "80"
     proto: tcp
   when: inventory_hostname == 'srv-web01'
 
-- name: ufw activé
+- name: Ufw activé
   community.general.ufw:
     state: enabled
 
-- name: fail2ban actif
+- name: Fail2ban actif
   ansible.builtin.service:
     name: fail2ban
     state: started

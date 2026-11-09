@@ -1,4 +1,4 @@
-- name: apt passe par le cache de SRV-ADM01
+- name: Apt passe par le cache de SRV-ADM01
   hosts: linux
   become: true
   tasks:
