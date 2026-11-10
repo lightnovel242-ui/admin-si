@@ -1,2 +1,15 @@
-cle_audit: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObLAms1IF3+9M22hTfELIVvCz0rZ0bwnaKbHVqWiYzX sysadmin@srv-adm01"
-# "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOw3qxuiLrUMaFtqys57HLEDw/zSgXdszLe5tXRfyjlu audit@intervenant"
+cle_audit: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOw3qxuiLrUMaFtqys57HLEDw/zSgXdszLe5tXRfyjlu audit@intervenant"
+
+# Pare-feu : SSH et HTTP ouverts, métriques et outils d'admin limités (moindre privilège)
+ufw_regles:
+  srv-web01:
+    - { port: "22" }
+    - { port: "80" }
+    - { port: "9100", source: "10.10.0.30" }
+  srv-adm01:
+    - { port: "22" }
+    - { port: "9090", source: "10.10.0.0/24" }
+    - { port: "3000", source: "10.10.0.0/24" }
+    - { port: "9100", source: "10.10.0.30" }
+    - { port: "3142", source: "10.10.0.0/24" }
+    - { port: "514", source: "10.10.0.0/24" }

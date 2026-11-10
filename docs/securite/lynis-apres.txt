@@ -98,7 +98,6 @@
 [4C- mdmonitor.service (value=9.5)[26C [ RISQUÉ ]
 [4C- nginx.service (value=9.6)[30C [ RISQUÉ ]
 [4C- open-vm-tools.service (value=9.5)[22C [ RISQUÉ ]
-[4C- packagekit.service (value=9.6)[25C [ RISQUÉ ]
 [4C- polkit.service (value=1.2)[29C [ PROTÉGÉ ]
 [4C- prometheus-node-exporter.service (value=9.2)[11C [ RISQUÉ ]
 [4C- rc-local.service (value=9.6)[27C [ RISQUÉ ]
@@ -125,6 +124,7 @@
 [4C- systemd-udevd.service (value=7.1)[22C [ MOYEN ]
 [4C- unattended-upgrades.service (value=9.6)[16C [ RISQUÉ ]
 [4C- user@1000.service (value=9.4)[26C [ RISQUÉ ]
+[4C- user@1001.service (value=9.4)[26C [ RISQUÉ ]
 [4C- vgauth.service (value=9.5)[29C [ RISQUÉ ]
 
 [+] Noyau
@@ -135,7 +135,7 @@
 [2C- Checking kernel version and release[22C [ FAIT ]
 [2C- Checking kernel type[37C [ FAIT ]
 [2C- Checking loaded kernel modules[27C [ FAIT ]
-[6CFound 127 active modules[31C
+[6CFound 118 active modules[31C
 [2C- Checking Linux kernel configuration file[17C [ TROUVÉ ]
 [2C- Checking default I/O kernel scheduler[20C [ NON TROUVÉ ]
 [2C- Checking for available kernel update[21C [ OK ]
@@ -150,7 +150,7 @@
 [+] Mémoire et processus
 ------------------------------------
 [2C- Checking /proc/meminfo[35C [ TROUVÉ ]
-[2C- Searching for dead/zombie processes[22C [ TROUVÉ ]
+[2C- Searching for dead/zombie processes[22C [ NON TROUVÉ ]
 [2C- Searching for IO waiting processes[23C [ NON TROUVÉ ]
 [2C- Search prelink tooling[35C [ NON TROUVÉ ]
 
@@ -227,7 +227,7 @@
 [2C- Mount options of /run[36C [ RENFORCÉ ]
 [2C- Mount options of /tmp[36C [ PARTIELLEMENT RENFORCÉ ]
 [2C- Mount options of /var[36C [ RENFORCÉ ]
-[2C- Total without nodev:4 noexec:9 nosuid:2 ro or noexec (W^X): 9 of total 27[0C
+[2C- Total without nodev:4 noexec:10 nosuid:2 ro or noexec (W^X): 10 of total 28[0C
 [2C- Disable kernel support of some filesystems[15C
 
 [+] Périphériques USB
@@ -416,7 +416,7 @@
 ------------------------------------
 [2C- NTP daemon found: systemd (timesyncd)[20C [ TROUVÉ ]
 [2C- Checking for a running NTP daemon or client[14C [ OK ]
-[2C- Last time synchronization[32C [ 28s ]
+[2C- Last time synchronization[32C [ 21s ]
 
 [+] Cryptographie
 ------------------------------------
@@ -436,7 +436,7 @@
 ------------------------------------
 [2C- Checking presence AppArmor[31C [ TROUVÉ ]
 [4C- Checking AppArmor status[31C [ ACTIVÉ ]
-[8CFound 36 unconfined processes[24C
+[8CFound 39 unconfined processes[24C
 [2C- Checking presence SELinux[32C [ NON TROUVÉ ]
 [2C- Checking presence TOMOYO Linux[27C [ NON TROUVÉ ]
 [2C- Checking presence grsecurity[29C [ NON TROUVÉ ]
@@ -553,7 +553,7 @@
   ! Couldn't find 2 responsive nameservers [NETW-2705] 
       https://cisofy.com/lynis/controls/NETW-2705/
 
-  Suggestions (45):
+  Suggestions (44):
   ----------------------------
   * This release is more than 4 months old. Check the website or GitHub to see if there is an update available. [LYNIS] 
     - Related resources
@@ -584,10 +584,6 @@
     - Related resources
       * Article: Systemd features to secure service files: https://linux-audit.com/systemd/systemd-features-to-secure-units-and-services/
       * Website: https://cisofy.com/lynis/controls/BOOT-5264/
-
-  * Check the output of ps for dead or zombie processes [PROC-3612] 
-    - Related resources
-      * Website: https://cisofy.com/lynis/controls/PROC-3612/
 
   * Configure password hashing rounds in /etc/login.defs [AUTH-9230] 
     - Related resources
@@ -816,4 +812,3 @@
 ================================================================================
 
   [TIP]: Enhance Lynis audits by adding your settings to custom.prf (see /etc/lynis/default.prf for all settings)
-

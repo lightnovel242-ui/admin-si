@@ -11,18 +11,15 @@
     default: deny
     direction: incoming
 
-- name: Ufw, SSH autorisé
+# Les ports viennent de group_vars/all/vars.yml (ufw_regles).
+# Serveur absent de la liste : SSH seul, pour ne jamais se couper l'accès.
+- name: Ufw, ports autorisés
   community.general.ufw:
     rule: allow
-    port: "22"
+    port: "{{ item.port }}"
     proto: tcp
-
-- name: Ufw, HTTP autorisé sur le serveur web
-  community.general.ufw:
-    rule: allow
-    port: "80"
-    proto: tcp
-  when: inventory_hostname == 'srv-web01'
+    from_ip: "{{ item.source | default('any') }}"
+  loop: "{{ ufw_regles[inventory_hostname] | default([{'port': '22'}]) }}"
 
 - name: Ufw activé
   community.general.ufw:

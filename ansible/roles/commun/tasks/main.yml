@@ -18,11 +18,12 @@
     shell: /bin/bash
     create_home: true
 
-- name: Clé publique du compte audit
+- name: Clé publique du compte audit (seule clé autorisée)
   ansible.posix.authorized_key:
     user: audit
     key: "{{ cle_audit }}"
     state: present
+    exclusive: true
 
 - name: Sudo sans mot de passe pour audit
   ansible.builtin.copy:
