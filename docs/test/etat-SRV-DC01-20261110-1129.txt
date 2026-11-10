@@ -1,0 +1,107 @@
+
+==================== IDENTITE ====================
+Serveur  : SRV-DC01
+Date     : 2026-11-10 11:29:51
+Lance par: PME\Administrator
+Systeme  : Microsoft Windows Server 2025 Datacenter Evaluation
+Demarre  : 11/10/2026 09:36:49
+
+InterfaceAlias IPAddress  PrefixLength
+-------------- ---------  ------------
+Ethernet0      10.10.0.10           24
+
+
+
+
+==================== ACTIVE DIRECTORY ====================
+[OK] domaine pme.lan (NetBIOS PME)
+Unites d'organisation :
+OU=Domain Controllers,DC=pme,DC=lan
+OU=PME,DC=pme,DC=lan
+OU=Utilisateurs,OU=PME,DC=pme,DC=lan
+OU=Groupes,OU=PME,DC=pme,DC=lan
+OU=Serveurs,OU=PME,DC=pme,DC=lan
+Utilisateurs : 6   Groupes : 57
+Ordinateurs du domaine :
+
+Name      Enabled DistinguishedName                              
+----      ------- -----------------                              
+SRV-DC01     True CN=SRV-DC01,OU=Domain Controllers,DC=pme,DC=lan
+SRV-WEB01    True CN=SRV-WEB01,OU=Serveurs,OU=PME,DC=pme,DC=lan  
+
+
+[OK] SRV-WEB01 joint au domaine
+
+
+==================== DNS ====================
+
+ZoneName       ZoneType IsDsIntegrated IsReverseLookupZone
+--------       -------- -------------- -------------------
+_msdcs.pme.lan Primary            True               False
+pme.lan        Primary            True               False
+
+
+[OK] resolution DNS de SRV-WEB01 -> 10.10.0.20
+[OK] resolution DNS de SRV-ADM01 -> 10.10.0.30
+
+
+==================== DHCP ====================
+
+ScopeId   Name    StartRange  EndRange    State 
+-------   ----    ----------  --------    ----- 
+10.10.0.0 LAN-PME 10.10.0.100 10.10.0.200 Active
+
+
+[OK] etendue DHCP active
+Baux en cours sur 10.10.0.0 : 0
+[OK] serveur DHCP autorise dans l'AD
+
+
+==================== PARTAGE ET QUOTA ====================
+
+Name     Path                                     Description        
+----     ----                                     -----------        
+Commun   E:\Partages\Commun                                          
+NETLOGON C:\WINDOWS\SYSVOL\sysvol\pme.lan\SCRIPTS Logon server share 
+SYSVOL   C:\WINDOWS\SYSVOL\sysvol                 Logon server share 
+
+
+[OK] partage Commun present
+
+
+Path               LimiteMo SoftLimit UtiliseMo
+----               -------- --------- ---------
+E:\Partages\Commun      500     False         0
+
+
+[OK] quota FSRM configure
+
+
+==================== GPO ====================
+
+DisplayName                                GpoStatus ModificationTime   
+-----------                                --------- ----------------   
+Default Domain Policy             AllSettingsEnabled 19/10/2026 11:33:40
+GPO_MAJ_WindowsUpdate             AllSettingsEnabled 10/11/2026 11:27:34
+Default Domain Controllers Policy AllSettingsEnabled 19/10/2026 11:07:22
+
+
+Liaisons a la racine du domaine et aux OU :
+  DC=pme,DC=lan -> Default Domain Policy
+  OU=Domain Controllers,DC=pme,DC=lan -> Default Domain Controllers Policy, GPO_MAJ_WindowsUpdate
+[OK] GPO de mise a jour trouvee
+
+
+==================== SUPERVISION (windows_exporter) ====================
+[OK] service windows_exporter actif
+[OK] port 9182 en ecoute
+
+DisplayName                       Action
+-----------                       ------
+windows_exporter depuis SRV-ADM01  Allow
+
+
+
+
+==================== RESUME ====================
+OK : 11   KO : 0
