@@ -1,0 +1,148 @@
+==================== IDENTITÉ ====================
+Serveur      : srv-web01
+Date         : 2026-11-10 10:39:57 CET
+Lancé par    : sysadmin
+machine-id   : 4ba9aa2ae84448ecbcf7a71bbf29ae3d
+Système      : Debian GNU/Linux 13 (trixie)
+Démarré      : 2026-11-10 09:24:57
+
+$ ip -brief -4 address
+lo               UNKNOWN        127.0.0.1/8
+ens33            UP             10.10.0.20/24
+
+==================== RÔLE COMMUN ====================
+Fuseau horaire : Europe/Paris
+[OK] fuseau Europe/Paris
+[OK] compte audit présent : uid=1002(audit) gid=1002(audit) groupes=1002(audit)
+[OK] authorized_keys présent (audit 600)
+Empreinte(s) de clé :
+256 SHA256:Lqk7gAWmTBc0bLcpHfKfB2bRNg/l3hhjCLl4CbUEqNQ audit@intervenant (ED25519)
+[OK] audit a sudo sans mot de passe
+
+$ sudo -l -U audit | tail -n 3
+
+L'utilisateur audit peut utiliser les commandes suivantes sur srv-web01 :
+    (ALL) NOPASSWD: ALL
+
+==================== RÔLE SSH ====================
+maxauthtries 3
+permitrootlogin no
+pubkeyauthentication yes
+passwordauthentication yes
+[OK] connexion root interdite
+[OK] MaxAuthTries limité (3)
+[OK] configuration sshd valide
+
+==================== RÔLE DURCISSEMENT ====================
+
+$ ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), disabled (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22/tcp (OpenSSH)           ALLOW IN    Anywhere
+80/tcp (Nginx HTTP)        ALLOW IN    Anywhere
+9100/tcp                   ALLOW IN    10.10.0.30
+22/tcp                     ALLOW IN    Anywhere
+80/tcp                     ALLOW IN    Anywhere
+22/tcp (OpenSSH (v6))      ALLOW IN    Anywhere (v6)
+80/tcp (Nginx HTTP (v6))   ALLOW IN    Anywhere (v6)
+22/tcp (v6)                ALLOW IN    Anywhere (v6)
+80/tcp (v6)                ALLOW IN    Anywhere (v6)
+
+[OK] ufw actif
+[OK] service fail2ban actif
+
+$ fail2ban-client status
+Status
+|- Number of jail:      1
+`- Jail list:   sshd
+
+$ fail2ban-client status sshd
+Status for the jail: sshd
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- Journal matches:  _SYSTEMD_UNIT=ssh.service + _COMM=sshd
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+[OK] unattended-upgrades installé
+
+$ cat /etc/apt/apt.conf.d/20auto-upgrades
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+
+$ systemctl is-enabled apt-daily-upgrade.timer
+enabled
+
+==================== SERVICES ====================
+[OK] service prometheus-node-exporter actif
+[OK] service nginx actif
+
+$ ss -lntp | awk 'NR==1 || /:(22|80|443|3000|9090|9093|9100|3142) /'
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+LISTEN 0      128          0.0.0.0:22        0.0.0.0:*    users:(("sshd",pid=1368,fd=6))
+LISTEN 0      511          0.0.0.0:80        0.0.0.0:*    users:(("nginx",pid=1334,fd=5),("nginx",pid=1333,fd=5))
+LISTEN 0      128             [::]:22           [::]:*    users:(("sshd",pid=1368,fd=7))
+LISTEN 0      511             [::]:80           [::]:*    users:(("nginx",pid=1334,fd=6),("nginx",pid=1333,fd=6))
+LISTEN 0      4096               *:9100            *:*    users:(("prometheus-node",pid=47460,fd=3))
+
+==================== DOMAINE ====================
+
+$ realm list
+pme.lan
+  type: kerberos
+  realm-name: PME.LAN
+  domain-name: pme.lan
+  configured: kerberos-member
+  server-software: active-directory
+  client-software: sssd
+  required-package: sssd-tools
+  required-package: sssd
+  required-package: libnss-sss
+  required-package: libpam-sss
+  required-package: adcli
+  required-package: samba-common-bin
+  login-formats: %U@pme.lan
+  login-policy: allow-realm-logins
+
+==================== SAUVEGARDE ====================
+
+$ crontab -l -u root
+no crontab for root
+
+$ crontab -l -u sysadmin
+no crontab for sysadmin
+
+$ ls -l /etc/cron.d/
+total 4
+-rw-r--r-- 1 root root 188 12 juil. 20:11 e2scrub_all
+
+$ grep -hvE '^(#|$|SHELL|PATH)' /etc/cron.d/* 2>/dev/null
+30 3 * * 0 root test -e /run/systemd/system || SERVICE_MODE=1 /usr/libexec/e2fsprogs/e2scrub_all_cron
+10 3 * * * root test -e /run/systemd/system || SERVICE_MODE=1 /sbin/e2scrub_all -A -r
+
+$ systemctl list-timers --all --no-pager | grep -viE 'apt|man-db|logrotate|fstrim|e2scrub|systemd-tmpfiles|dpkg'
+NEXT                            LEFT LAST                               PASSED UNIT                         ACTIVATES
+Tue 2026-11-10 10:51:36 CET    11min Fri 2026-10-23 14:34:02 CEST            - mdmonitor-oneshot.timer      mdmonitor-oneshot.service
+Tue 2026-11-10 11:17:50 CET    37min Thu 2026-10-22 11:49:35 CEST            - mdcheck_start.timer          mdcheck_start.service
+Tue 2026-11-10 14:18:58 CET 3h 39min Mon 2026-11-09 19:08:21 CET             - mdcheck_continue.timer       mdcheck_continue.service
+Wed 2026-11-11 00:29:00 CET      13h -                                       - lynis.timer                  lynis.service
+
+12 timers listed.
+
+==================== LYNIS ====================
+Dernier rapport : 2026-11-10 10:32:40.624146219 +0100
+lynis_version=3.1.4
+report_datetime_end=2026-11-10 10:32:38
+hardening_index=71
+
+==================== RÉSUMÉ ====================
+OK : 12   KO : 0
+
+Fichier à envoyer : /home/sysadmin/etat-srv-web01-20261110-1039.txt
